@@ -19,6 +19,8 @@ class Game:
         self.scores = {"green": 0, "red": 0}
         self.green_pos = self.random_start()
         self.red_pos = self.random_start(exclude=[self.green_pos])
+        self.cells_painted = {"green": 0, "red": 0}  # NUEVO: celdas pintadas
+
 
     def random_start(self, exclude=[]):
         while True:
@@ -63,6 +65,9 @@ class Game:
             self.green_pos = move
         else:
             self.red_pos = move
+        if move not in self.painted and any(move in zone for zone in SPECIAL_ZONES):
+                self.painted[move] = player
+                self.cells_painted[player] += 1 
         self.paint_zone(player, move)
 
     def game_over(self):

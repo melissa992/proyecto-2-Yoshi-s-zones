@@ -50,7 +50,11 @@ class GameUI:
         pygame.draw.circle(self.screen, RED, (rx*CELL_SIZE + 40, ry*CELL_SIZE + 40), 20)
 
         font = pygame.font.SysFont(None, 24)
-        text = font.render(f"Green: {self.game.scores['green']} | Red: {self.game.scores['red']}", True, (0, 0, 0))
+        score_text = (
+        f"Zonas Green: {self.game.scores['green']} | Zonas Red: {self.game.scores['red']} | "
+        f"Celdas Green: {self.game.cells_painted['green']} | Celdas Red: {self.game.cells_painted['red']}"
+       )
+        text = font.render(score_text, True, (0, 0, 0))
         self.screen.blit(text, (10, HEIGHT + 10))
 
     def run(self):

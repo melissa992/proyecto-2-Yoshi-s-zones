@@ -28,7 +28,19 @@ def max_value(game, depth):
     return value
 
 def evaluate(game):
-    return game.scores["green"] - game.scores["red"]
+    green_zones = game.scores["green"]
+    red_zones = game.scores["red"]
+    green_cells = game.cells_painted["green"]
+    red_cells = game.cells_painted["red"]
+
+    green_moves = len(game.get_possible_moves(game.green_pos))
+    red_moves = len(game.get_possible_moves(game.red_pos))
+
+    return (
+        10 * (green_zones - red_zones) +       
+        2 * (green_cells - red_cells) +        
+        1 * (green_moves - red_moves)         
+    )
 
 def simulate_move(game, player, move):
     import copy

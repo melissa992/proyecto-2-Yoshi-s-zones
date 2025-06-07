@@ -18,13 +18,21 @@ SPECIAL_ZONES = [
 
 class GameUI:
     def __init__(self, game):
+        #Imagenes de los jugadores
+        self.green_img = pygame.image.load("imagenes/green_yoshi.png").convert_alpha()
+        self.red_img = pygame.image.load("imagenes/red_yoshi.png").convert_alpha()
+        self.green_img = pygame.transform.scale(self.green_img, (CELL_SIZE, CELL_SIZE))
+        self.red_img = pygame.transform.scale(self.red_img, (CELL_SIZE, CELL_SIZE))
+
         self.game = game
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT + 40))
         pygame.display.set_caption("Yoshi's Zones")
         self.clock = pygame.time.Clock()
 
     def draw_board(self):
+        #Pintar fondo del tablero
         self.screen.fill(WHITE)
+
         for x in range(8):
             for y in range(8):
                 rect = pygame.Rect(x*CELL_SIZE, y*CELL_SIZE, CELL_SIZE, CELL_SIZE)
@@ -44,10 +52,16 @@ class GameUI:
                     pygame.draw.rect(self.screen, (0, 0, 0), rect, 3)
 
         # Dibujar piezas de los jugadores
+            #gx, gy = self.game.green_pos
+            #pygame.draw.circle(self.screen, GREEN, (gx*CELL_SIZE + 40, gy*CELL_SIZE + 40), 20)
+            #rx, ry = self.game.red_pos
+            #pygame.draw.circle(self.screen, RED, (rx*CELL_SIZE + 40, ry*CELL_SIZE + 40), 20)
+
+        #Dibujar imágenes de los jugadores
         gx, gy = self.game.green_pos
-        pygame.draw.circle(self.screen, GREEN, (gx*CELL_SIZE + 40, gy*CELL_SIZE + 40), 20)
         rx, ry = self.game.red_pos
-        pygame.draw.circle(self.screen, RED, (rx*CELL_SIZE + 40, ry*CELL_SIZE + 40), 20)
+        self.screen.blit(self.green_img, (gx * CELL_SIZE, gy * CELL_SIZE))
+        self.screen.blit(self.red_img, (rx * CELL_SIZE, ry * CELL_SIZE))
 
         font = pygame.font.SysFont(None, 24)
         score_text = (
@@ -91,13 +105,18 @@ def show_menu():
     font = pygame.font.SysFont(None, 36)
     options = [("Principiante", 2), ("Amateur", 4), ("Experto", 6)]
     buttons = []
+    
+    #Cargar imagen de fondo
+    bg = pygame.image.load("imagenes/fondo_menu.jpg").convert()
+    bg = pygame.transform.scale(bg, (WIDTH, HEIGHT))
 
     for i, (label, _) in enumerate(options):
         rect = pygame.Rect(WIDTH//4, 100 + i*100, WIDTH//2, 50)
         buttons.append((rect, label))
 
     while True:
-        screen.fill(WHITE)
+        #screen.fill(WHITE)
+        screen.blit(bg, (0, 0))  # Dibuja el fondo
         for i, (rect, label) in enumerate(buttons):
             pygame.draw.rect(screen, GRAY, rect)
             text = font.render(label, True, (0, 0, 0))

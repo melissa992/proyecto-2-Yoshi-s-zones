@@ -15,7 +15,8 @@ class Game:
         self.board = [[None for _ in range(BOARD_SIZE)] for _ in range(BOARD_SIZE)]
         self.painted = {}
         self.depth = depth
-        self.turn = "green"
+        #self.turn = "green"
+        self.turn = "red"
         self.scores = {"green": 0, "red": 0}
         self.green_pos = self.random_start()
         self.red_pos = self.random_start(exclude=[self.green_pos])

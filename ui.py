@@ -73,16 +73,20 @@ class GameUI:
 
     def run(self):
         running = True
+        game_ended = False
+
         while running:
             self.clock.tick(30)
-            if self.game.turn == "green" and not self.game.game_over():
+
+            if not self.game.game_over() and self.game.turn == "green":
                 self.game.ai_turn()
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
+                    return False  # salir del juego
 
-                if event.type == pygame.MOUSEBUTTONDOWN and self.game.turn == "red":
+                if event.type == pygame.MOUSEBUTTONDOWN and self.game.turn == "red" and not self.game.game_over():
                     x, y = pygame.mouse.get_pos()
                     gx, gy = x // CELL_SIZE, y // CELL_SIZE
                     if (gx, gy) in self.game.get_possible_moves(self.game.red_pos):
@@ -90,14 +94,22 @@ class GameUI:
                         self.game.turn = "green"
 
             self.draw_board()
-            if self.game.game_over():
+
+            if self.game.game_over() and not game_ended:
                 winner = self.game.get_winner()
                 font = pygame.font.SysFont(None, 48)
                 msg = f"¡Gana {winner}!" if winner != "draw" else "¡Empate!"
                 text = font.render(msg, True, (0, 0, 0))
                 self.screen.blit(text, (200, HEIGHT // 2))
+                pygame.display.flip()
+                pygame.time.wait(3000)
+                game_ended = True
+                return True  # volver al menú
+
             pygame.display.flip()
+
         pygame.quit()
+        return False
 
 def show_menu():
     screen = pygame.display.set_mode((WIDTH, HEIGHT))

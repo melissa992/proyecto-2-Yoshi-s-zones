@@ -1,30 +1,45 @@
 def minimax_decision(game, depth):
     best_value = float('-inf')
     best_move = None
+    alpha = float('-inf')
+    beta = float('inf')
+
     for move in game.get_possible_moves(game.green_pos):
         new_game = simulate_move(game, "green", move)
-        value = min_value(new_game, depth - 1)
+        value = min_value(new_game, depth - 1, alpha, beta)
         if value > best_value:
             best_value = value
             best_move = move
+        alpha = max(alpha, best_value)
+
     return best_move
 
-def min_value(game, depth):
+def min_value(game, depth, alpha, beta):
     if depth == 0 or game.game_over():
         return evaluate(game)
+
     value = float('inf')
     for move in game.get_possible_moves(game.red_pos):
         new_game = simulate_move(game, "red", move)
-        value = min(value, max_value(new_game, depth - 1))
+        value = min(value, max_value(new_game, depth - 1, alpha, beta))
+        if value <= alpha:
+            return value  # poda
+        beta = min(beta, value)
+
     return value
 
-def max_value(game, depth):
+def max_value(game, depth, alpha, beta):
     if depth == 0 or game.game_over():
         return evaluate(game)
+
     value = float('-inf')
     for move in game.get_possible_moves(game.green_pos):
         new_game = simulate_move(game, "green", move)
-        value = max(value, min_value(new_game, depth - 1))
+        value = max(value, min_value(new_game, depth - 1, alpha, beta))
+        if value >= beta:
+            return value  # poda
+        alpha = max(alpha, value)
+
     return value
 
 def evaluate(game):

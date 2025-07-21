@@ -51,9 +51,42 @@ def evaluate(game):
     green_moves = len(game.get_possible_moves(game.green_pos))
     red_moves = len(game.get_possible_moves(game.red_pos))
 
+    # Calcula el potencial inmediato para el control de zonas
+    green_potential_zones = 0
+    red_potential_zones = 0
+
+    # Itera sobre cada zona especial para calcular su 'potencial'
+    # Accede a las zonas especiales a través de la instancia del juego (game.SPECIAL_ZONES)
+    # o directamente si la importaste como constante global.
+    for zone in game.SPECIAL_ZONES:
+        owner = game.majority_owner(zone)
+        if owner == "green":
+            green_potential_zones += 1 # Si ya la controla, cuenta como un potencial completo
+        elif owner == "red":
+            red_potential_zones += 1 # Si el oponente la controla, cuenta como potencial para él
+        else: # Zona está siendo disputada o no tiene dueño mayoritario
+            counts = {"green": 0, "red": 0}
+            for cell in zone:
+                if cell in game.painted:
+                    counts[game.painted[cell]] += 1
+            
+            # **CAMBIO: Valorar la cercanía al control de zona**
+            # Si el verde necesita 1 celda más para controlar (y el rojo no tiene la mayoría)
+            if counts["green"] + 1 > len(zone) // 2 and counts["red"] <= len(zone) // 2:
+                green_potential_zones += 0.5 # Bonificación por estar "a un paso" de controlar
+
+            # Si el rojo necesita 1 celda más para controlar (y el verde no tiene la mayoría)
+            if counts["red"] + 1 > len(zone) // 2 and counts["green"] <= len(zone) // 2:
+                red_potential_zones += 0.5 # Penalización por permitir que el rojo esté "a un paso"
+
     return (
-        10 * (green_zones - red_zones) +       
-        2 * (green_cells - red_cells) +        
+        # **CAMBIO: Aumento del peso de control de zonas completas**
+        15 * (green_zones - red_zones) +      
+        # **CAMBIO: Aumento significativo del peso de celdas pintadas individualmente**
+        5 * (green_cells - red_cells) +       
+        # **CAMBIO: Incorporación del potencial de zona**
+        3 * (green_potential_zones - red_potential_zones) + 
+        # Mantener peso para la movilidad
         1 * (green_moves - red_moves)         
     )
 

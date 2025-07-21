@@ -12,6 +12,8 @@ SPECIAL_ZONES = [
 
 class Game:
     def __init__(self, depth):
+        #Se agrega el atributo SPECIAL_ZONES para ser usado en minimax.py
+        self.SPECIAL_ZONES = SPECIAL_ZONES      
         self.board = [[None for _ in range(BOARD_SIZE)] for _ in range(BOARD_SIZE)]
         self.painted = {}
         self.depth = depth
